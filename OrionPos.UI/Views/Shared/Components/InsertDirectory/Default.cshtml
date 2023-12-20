@@ -1,0 +1,117 @@
+﻿@model CreateDirectoryDto
+
+<!-- Modal -->
+<div class="modal fade" id="insertModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="insertModalLabel">Yeni Kayıt Ekle</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form asp-action="CreatePhoneRecord" asp-controller="Directory" method="post" id="CreatePhoneRecordForm">
+
+                    <div class="row mb-3">
+                        <label asp-for="FirstName" class="col-4  text-end col-form-label">Ad</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="FirstName" id="FirstNameForCreate">
+                           
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="FirstName"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="LastName" class="col-4  text-end col-form-label">Soyad</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="LastName"  id="LastNameForCreate">
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="LastName"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="TelephoneNumber" class="col-4  text-end col-form-label">Telefon No</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="TelephoneNumber"  id="TelephoneNumberForCreate">
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="TelephoneNumber"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="d-none" type="submit" id="CreatePhoneRecordSubmit" />
+                </form>
+                <div class="row mb-3">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-save w-100" onclick="$('#CreatePhoneRecordSubmit').click();">Kaydet</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-cancel w-100" data-bs-dismiss="modal">Vazgeç</button>
+                    </div>
+                </div>
+              
+
+            </div>
+        
+        </div>
+    </div>
+</div>
+
+@*Ajax Form*@
+<script>
+    const myModalEl = document.getElementById('insertModal')
+    myModalEl.addEventListener('hidden.bs.modal', event => {
+        $("#FirstNameForCreate").val('');
+        $("#LastNameForCreate").val('');
+        $("#TelephoneNumberForCreate").val('');
+    })
+    $(function () {
+        $("#CreatePhoneRecordForm").submit(function (e) {
+            e.preventDefault();
+
+            var flag =  $("#CreatePhoneRecordForm").valid();
+            if (flag) {
+                var formAction = $(this).attr("action");
+                var firstName = $("#FirstNameForCreate").val();
+                var lastName = $("#LastNameForCreate").val();
+                var telephoneNumber = $("#TelephoneNumberForCreate").val();
+
+
+                $.ajax({
+                    type: 'post',
+                    url: formAction,
+                    data: {
+                        firstName,
+                        lastName,
+                        telephoneNumber
+                    },
+                }).done(function (result) {
+                    // do something with the result now
+                    console.log(result);
+                    if (result.responseType == 0) {
+                        $("#insertModal").modal("hide");
+                        var dir = JSON.parse(localStorage.getItem("directories"));
+                        dir.push(result.data);
+                        localStorage.setItem("directories", JSON.stringify(dir));
+                        refreshTable();
+                        
+
+                    } 
+                });
+            }
+            
+        });
+    })
+
+</script>

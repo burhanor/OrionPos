@@ -1,0 +1,129 @@
+﻿@model UpdateDirectoryDto
+<!-- Modal -->
+<div class="modal fade" id="updateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="updateModalLabel">Düzenle</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form asp-action="UpdatePhoneRecord" asp-controller="Directory" method="post" id="UpdatePhoneRecordForm">
+
+                    <input type="hidden" asp-for="Id" id="IdUpdate" />
+                    <div class="row mb-3">
+                        <label asp-for="FirstName" class="col-4  text-end col-form-label">Ad</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="FirstName" id="FirstNameUpdate">
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="FirstName"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="LastName" class="col-4  text-end col-form-label">Soyad</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="LastName" id="LastNameUpdate">
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="LastName"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label asp-for="TelephoneNumber" class="col-4  text-end col-form-label">Telefon No</label>
+
+                        <div class="col-8">
+                            <input type="text" class="form-control" asp-for="TelephoneNumber" id="TelephoneNumberUpdate">
+                            <div class="row">
+                                <div class="col-12">
+                                    <span asp-validation-for="TelephoneNumber"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="d-none" type="submit" id="UpdatePhoneRecordSubmit" />
+
+                </form>
+                <div class="row mb-3">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-save w-100" onclick="$('#UpdatePhoneRecordSubmit').click();">Kaydet</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-cancel w-100" data-bs-dismiss="modal">Vazgeç</button>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        const myModalEl = document.getElementById('updateModal')
+        myModalEl.addEventListener('show.bs.modal', event => {
+            var selected = JSON.parse(localStorage.getItem("selected"));
+            var selectedid = selected[0];
+            var dir = JSON.parse(localStorage.getItem("directories"));
+            var elem = dir.find(m => m.id == selectedid);
+            $("#FirstNameUpdate").val(elem.firstName);
+            $("#LastNameUpdate").val(elem.lastName);
+            $("#TelephoneNumberUpdate").val(elem.telephoneNumber);
+            $("#IdUpdate").val(selectedid);
+
+        });
+
+
+        $(function () {
+            $("#UpdatePhoneRecordForm").submit(function (e) {
+                e.preventDefault();
+
+                var flag = $("#UpdatePhoneRecordForm").valid();
+                if (flag) {
+                    var formAction = $(this).attr("action");
+                    var id = $("#IdUpdate").val();
+                    var firstName = $("#FirstNameUpdate").val();
+                    var lastName = $("#LastNameUpdate").val();
+                    var telephoneNumber = $("#TelephoneNumberUpdate").val();
+
+                    $.ajax({
+                        type: 'post',
+                        url: formAction,
+                        data: {
+                            id,
+                            firstName,
+                            lastName,
+                            telephoneNumber
+                        },
+                    }).done(function (result) {
+                        if (result.responseType == 0) {
+                            $("#updateModal").modal("hide");
+                            var dir = JSON.parse(localStorage.getItem("directories"));
+                            dir.find(m => m.id == result.data.id).firstName = result.data.firstName;
+                            dir.find(m => m.id == result.data.id).lastName = result.data.lastName;
+                            dir.find(m => m.id == result.data.id).telephoneNumber = result.data.telephoneNumber;
+                            localStorage.setItem("directories", JSON.stringify(dir));
+                            refreshTable();
+
+
+                        }
+                    });
+                }
+
+            });
+        })
+
+
+    })
+</script>

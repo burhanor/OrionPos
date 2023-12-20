@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/theme.css",
+    "inputFile": "wwwroot/css/theme.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/theme.loginpage.css",
+    "inputFile": "wwwroot/css/theme.loginpage.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/loginpage.css",
+    "inputFile": "wwwroot/css/loginpage.scss"
+  }
+]

@@ -1,0 +1,92 @@
+﻿
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">Düzenle</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <p>Seçilen <span id="selectedCountForDelete">0</span> kayıt silinecek onaylıyor musunuz?</p>
+                <form asp-action="DeletePhoneRecord" asp-controller="Directory" method="post" id="DeletePhoneRecordForm">
+
+                    <div id="deleteIds">
+                    </div>
+                
+                    <input class="d-none" type="submit" id="DeletePhoneRecordSubmit" />
+
+                </form>
+                <div class="row mb-3">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-save w-100" onclick="$('#DeletePhoneRecordSubmit').click();">Sil</button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-cancel w-100" data-bs-dismiss="modal">Vazgeç</button>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        const myModalEl = document.getElementById('deleteModal')
+        myModalEl.addEventListener('show.bs.modal', event => {
+            var selected = JSON.parse(localStorage.getItem("selected"));
+            $("#selectedCountForDelete").html(selected.length);
+            $("#deleteIds").empty();
+            //$("#deleteIds").html(selected.map((e, i) => {
+            //    return `<input type="hidden" name="Id[${i}]" value="${e}" />`;
+            //}));
+
+        });
+
+
+        $(function () {
+            $("#DeletePhoneRecordForm").submit(function (e) {
+                e.preventDefault();
+
+                var flag = $("#DeletePhoneRecordForm").valid();
+                if (flag) {
+                    var formAction = $(this).attr("action");
+                    var selectedIds = JSON.parse(localStorage.getItem("selected"));
+                 
+
+                    $.ajax({
+                        type: 'post',
+                        url: formAction,
+                        data: {
+                            Ids: selectedIds,
+                        },
+                    }).done(function (result) {
+                        console.log(result);
+                        if (result.responseType == 0) {
+                            $("#deleteModal").modal("hide");
+                            var selected = [];
+                            localStorage.setItem("selected", JSON.stringify(selected));
+
+                            var dir = JSON.parse(localStorage.getItem("directories"));
+                            dir = dir.filter(e => !result.data.includes(e.id));
+                            localStorage.setItem("directories", JSON.stringify(dir));
+
+
+                            refreshTable();
+
+                        }
+                    });
+                }
+
+            });
+        })
+
+
+    })
+</script>

@@ -1,0 +1,72 @@
+﻿
+
+
+<div class="row  m-0">
+    <div class="col-6">
+        @await Component.InvokeAsync("DirectoryList")
+
+
+    </div>
+    <div class="col-6">
+        <div class="row m-0">
+            <div class="col-8">
+                <div class="input-group mb-3 ">
+                    <span class="input-group-text" id="basic-addon1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input id="searchInput" type="text" class="form-control btn-custom" placeholder="" style="border-left:unset !important; " aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-3">
+                        <button class="btn btn-custom" id="insertButton" data-bs-toggle="modal" data-bs-target="#insertModal">
+                            <i class="fa-solid fa-circle-plus"></i>
+
+                        </button>
+                    </div>
+                    <div class="col-3">
+
+                        <button class="btn btn-custom" id="updateButton" data-bs-toggle="modal" data-bs-target="#updateModal" disabled>
+
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-custom">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-danger" id="deleteButton"  data-bs-toggle="modal" data-bs-target="#deleteModal" disabled>
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        @await Component.InvokeAsync("InsertDirectory")
+        @await Component.InvokeAsync("UpdateDirectory")
+        @await Component.InvokeAsync("DeleteDirectory")
+
+    </div>
+</div>
+
+
+
+<script>
+
+    $(function () {
+        $("#searchInput").keyup(function (event) {
+            if (event.keyCode === 13) {
+                setTable(1);
+            }
+        });
+    })
+
+</script>
